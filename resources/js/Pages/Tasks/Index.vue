@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router, usePage } from '@inertiajs/vue3';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -66,7 +67,7 @@ const scheduleDailyReminder = async () => {
                  await LocalNotifications.schedule({
                     notifications: [
                         {
-                            title: "Cleanly",
+                            title: "Neatly",
                             body: "Time to check your daily cleaning rituals!",
                             id: 1,
                             schedule: { 

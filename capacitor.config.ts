@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.gkapologista.cleanly',
-  appName: 'Cleanly',
+  appId: 'com.gkapologista.neatly',
+  appName: 'Neatly',
   webDir: 'public'
 };
 

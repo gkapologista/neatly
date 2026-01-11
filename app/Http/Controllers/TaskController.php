@@ -15,7 +15,13 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Auth::user()->tasks()
-            ->orderByRaw("FIELD(type, 'daily', 'weekly', 'monthly', 'custom')")
+            ->orderByRaw("CASE 
+                WHEN type = 'daily' THEN 1 
+                WHEN type = 'weekly' THEN 2 
+                WHEN type = 'monthly' THEN 3 
+                WHEN type = 'custom' THEN 4 
+                ELSE 5 
+            END")
             ->orderBy('is_completed')
             ->get();
 
