@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Task;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
+class TaskController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $tasks = Auth::user()->tasks()
+            ->orderByRaw("FIELD(type, 'daily', 'weekly', 'monthly', 'custom')")
+            ->orderBy('is_completed')
+            ->get();
+
+        return Inertia::render('Tasks/Index', [
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:daily,weekly,monthly,custom',
+            'frequency' => 'nullable|string',
+        ]);
+
+        $task = Auth::user()->tasks()->create($validated);
+
+        \App\Events\TaskCreated::dispatch($task);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Task $task)
+    {
+        // Ensure user owns the task
+        if ($task->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'is_completed' => 'sometimes|boolean',
+            'type' => 'sometimes|in:daily,weekly,monthly,custom',
+        ]);
+
+        if (isset($validated['is_completed'])) {
+            $validated['completed_at'] = $validated['is_completed'] ? now() : null;
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('tasks', 'public');
+            $validated['image_path'] = $path;
+        }
+
+        $task->update($validated);
+
+        \App\Events\TaskUpdated::dispatch($task);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Task $task)
+    {
+        if ($task->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $taskId = $task->id;
+        $userId = $task->user_id;
+
+        $task->delete();
+
+        \App\Events\TaskDeleted::dispatch($taskId, $userId);
+
+        return redirect()->back();
+    }
+}
