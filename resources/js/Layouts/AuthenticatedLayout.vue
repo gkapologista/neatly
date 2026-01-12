@@ -80,6 +80,7 @@ const showingNavigationDropdown = ref(false);
                                             :href="route('logout')"
                                             method="post"
                                             as="button"
+                                            :replace="true"
                                         >
                                             Log Out
                                         </DropdownLink>
@@ -171,6 +172,7 @@ const showingNavigationDropdown = ref(false);
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
+                                :replace="true"
                             >
                                 Log Out
                             </ResponsiveNavLink>
