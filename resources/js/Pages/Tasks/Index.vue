@@ -52,8 +52,14 @@ onMounted(() => {
 });
 
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { Capacitor } from '@capacitor/core';
 
 const scheduleDailyReminder = async () => {
+    // Only run on native platforms (iOS/Android), not in web browser
+    if (!Capacitor.isNativePlatform()) {
+        return;
+    }
+
     try {
         const perm = await LocalNotifications.requestPermissions();
         if (perm.display === 'granted') {
@@ -80,7 +86,7 @@ const scheduleDailyReminder = async () => {
             }
         }
     } catch (e) {
-        console.log('Local Notifications not available (web mode?)', e);
+        console.log('Local Notifications not available', e);
     }
 };
 
