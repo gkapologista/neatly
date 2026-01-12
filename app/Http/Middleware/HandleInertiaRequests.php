@@ -34,6 +34,14 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'upcoming_tasks' => $request->user()
+                ? $request->user()->tasks()
+                    ->where('is_completed', false)
+                    ->whereNotNull('scheduled_at')
+                    ->where('scheduled_at', '>=', now())
+                    ->where('scheduled_at', '<=', now()->addHours(24))
+                    ->get()
+                : [],
         ];
     }
 }

@@ -38,6 +38,10 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:daily,weekly,monthly,custom',
+            'scheduled_at' => 'nullable|date|required_if:type,custom',
+            'scheduled_time' => 'nullable|date_format:H:i|required_if:type,daily,weekly,monthly',
+            'day_of_week' => 'nullable|integer|between:1,7|required_if:type,weekly',
+            'day_of_month' => 'nullable|integer|between:1,31|required_if:type,monthly',
             'frequency' => 'nullable|string',
         ]);
 
@@ -62,6 +66,10 @@ class TaskController extends Controller
             'title' => 'sometimes|string|max:255',
             'is_completed' => 'sometimes|boolean',
             'type' => 'sometimes|in:daily,weekly,monthly,custom',
+            'scheduled_at' => 'nullable|date|required_if:type,custom',
+            'scheduled_time' => 'nullable|date_format:H:i|required_if:type,daily,weekly,monthly',
+            'day_of_week' => 'nullable|integer|between:1,7|required_if:type,weekly',
+            'day_of_month' => 'nullable|integer|between:1,31|required_if:type,monthly',
         ]);
 
         if (isset($validated['is_completed'])) {
